@@ -32,7 +32,8 @@ class DINOv2(nn.Module):
         # self.model = torch.hub.load('facebookresearch/dinov2', model_name)
         # self.model = torch.hub.load('facebookresearch/dinov2', model_name, pretrained=False)
         # self.model = torch.hub.load('./LoopModels/dinov2', model_name, source='local', pretrained=False)
-        self.model.load_state_dict(torch.hub.load('facebookresearch/dinov2', model_name))
+        self.model.load_state_dict(torch.hub.load_state_dict_from_url("https://huggingface.co/spaces/BoukamchaSmartVisions/FeatureMatching/blob/main/models/dinov2_vitb14_pretrain.pth"))
+        
         self.num_channels = DINOV2_ARCHS[model_name]
         self.num_trainable_blocks = num_trainable_blocks
         self.norm_layer = norm_layer

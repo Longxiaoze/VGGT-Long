@@ -110,6 +110,13 @@ Install the image retrieval
 pip install ./DPRetrieval
 ```
 
+``` bash
+mkdir  weights
+cd weight
+wget https://github.com/serizba/salad/releases/download/v1.0.0/dino_salad.ckpt
+cd ..
+```
+
 #### Step 4: Bag of Words Model Setup
 
 Download the pre-trained Bag of Words vocabulary for `DBoW2`:
