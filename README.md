@@ -48,6 +48,7 @@ Next, install `PyTorch`
 ```bash
 pip install torch==2.2.0 torchvision==0.17.0 torchaudio==2.2.0 --index-url https://download.pytorch.org/whl/cu118
 # Verified to work with CUDA 11.8 and torch 2.2.0
+# alse test on cuda 12.4 and torch 2.6.0
 ```
 
 Then install other dependencies exactly the same as [VGGT](https://github.com/facebookresearch/vggt)
@@ -61,6 +62,7 @@ pip install -r requirements.txt
 We provide a Python-based Sim3 solver, so `VGGT-Long` can run the loop closure correction solving without compiling `C++` code. Therefore, this step is optional and you can skip it. However, we still recommend installing the `C++` solver as it is more stable and faster.
 
 ```bash
+# I did not use this
 python setup.py install
 ```
 
@@ -72,13 +74,28 @@ Our goal is to use as much pure `Python` as possible. However, currently `C++` c
 
 Install the `OpenCV C++ API`.
 
-```
-sudo apt-get install -y libopencv-dev
+``` bash
+# sudo apt-get install -y libopencv-dev
+conda deactivate
+# get sources
+git clone --branch 4.5.5 https://github.com/opencv/opencv.git
+cd opencv
+mkdir build && cd build
+
+# configure
+cmake -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=/usr/local \
+      ..
+
+# build & install
+make -j$(nproc)
+sudo make install
 ```
 
 Install `DBoW2`
 
-```
+``` bash
+conda deactivate
 cd DBoW2
 mkdir -p build && cd build
 cmake ..
@@ -89,7 +106,7 @@ cd ../..
 
 Install the image retrieval
 
-```
+``` bash
 pip install ./DPRetrieval
 ```
 

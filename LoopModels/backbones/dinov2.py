@@ -31,8 +31,8 @@ class DINOv2(nn.Module):
         assert model_name in DINOV2_ARCHS.keys(), f'Unknown model name {model_name}'
         # self.model = torch.hub.load('facebookresearch/dinov2', model_name)
         # self.model = torch.hub.load('facebookresearch/dinov2', model_name, pretrained=False)
-        self.model = torch.hub.load('./LoopModels/dinov2', model_name, source='local', pretrained=False)
-        self.model.load_state_dict(torch.load('weights/dinov2_vitb14_pretrain.pth'))
+        # self.model = torch.hub.load('./LoopModels/dinov2', model_name, source='local', pretrained=False)
+        self.model.load_state_dict(torch.hub.load('facebookresearch/dinov2', model_name))
         self.num_channels = DINOV2_ARCHS[model_name]
         self.num_trainable_blocks = num_trainable_blocks
         self.norm_layer = norm_layer

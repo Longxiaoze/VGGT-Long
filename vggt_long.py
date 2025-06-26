@@ -14,7 +14,7 @@ except ImportError:
     print("onnxruntime not found. Sky segmentation may not work.")
 
 from LoopModels.LoopModel import LoopDetector
-from loop_closure.retrieval.retrieval_dbow import RetrievalDBOW
+from LoopModelDBoW.retrieval.retrieval_dbow import RetrievalDBOW
 from loop_utils.visual_util import segment_sky, download_file_from_url
 from vggt.models.vggt import VGGT
 from vggt.utils.load_fn import load_and_preprocess_images
@@ -60,7 +60,7 @@ class LongSeqResult:
         self.combined_world_points_confs = []
 
 class VGGT_Long:
-    def __init__(self, image_dir, save_dir):
+    def __init__(self, image_dir, save_dir,useDBoW=False):
         self.chunk_size = 60
         self.overlap = 25
         self.conf_threshold = 1.5
@@ -68,7 +68,7 @@ class VGGT_Long:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.dtype = torch.bfloat16 if torch.cuda.get_device_capability()[0] >= 8 else torch.float16
         self.sky_mask = False
-        self.useDBoW = False
+        self.useDBoW = useDBoW
 
         self.img_dir = image_dir
         self.img_list = None
@@ -88,11 +88,11 @@ class VGGT_Long:
         print('Loading model...')
 
         self.model = VGGT()
-        # _URL = "https://huggingface.co/facebook/VGGT-1B/resolve/main/model.pt"
-        # model.load_state_dict(torch.hub.load_state_dict_from_url(_URL))
-        _URL = "./weights/model.pt"
-        state_dict = torch.load(_URL, map_location='cuda')
-        self.model.load_state_dict(state_dict, strict=False)
+        _URL = "https://huggingface.co/facebook/VGGT-1B/resolve/main/model.pt"
+        self.model.load_state_dict(torch.hub.load_state_dict_from_url(_URL))
+        # _URL = "./weights/model.pt"
+        # state_dict = torch.load(_URL, map_location='cuda')
+        # self.model.load_state_dict(state_dict, strict=False)
 
         self.model.eval()
         self.model = self.model.to(self.device)
@@ -124,7 +124,7 @@ class VGGT_Long:
 
         if self.loop_enable:
             if self.useDBoW:
-                self.retrieval = RetrievalDBOW(vocab_path = "/media/deng/Data/VGGT-Long (copy)/ORBvoc.txt")
+                self.retrieval = RetrievalDBOW(vocab_path = "ORBvoc.txt")
             else:
                 loop_info_save_path = os.path.join(save_dir, "loop_closures.txt")
                 self.loop_detector = LoopDetector(
@@ -493,7 +493,7 @@ if __name__ == '__main__':
         os.makedirs(save_dir)
         print(f'The exp will be saved under dir: {save_dir}')
 
-    vggt_long = VGGT_Long(image_dir, save_dir)
+    vggt_long = VGGT_Long(image_dir, save_dir, useDBoW=True)  # Set useDBoW to True to use DBoW2 for loop detection
     vggt_long.run()
     vggt_long.close()
     del vggt_long
